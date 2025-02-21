@@ -61,11 +61,7 @@ namespace Password_Manager
         {
             buttonShow.Enabled = buttonCopyToCB.Enabled = !string.IsNullOrWhiteSpace(textPassword.Text);
         }
-
-        private void dataGridPasswords_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            //MessageBox.Show("Row added");
-        }
+        
         private void SetPasswordCount()
         {
             groupPasswords.Text = $"{groupPasswords.Tag.ToString()} ({dataGridPasswords.Rows.Count})";
@@ -160,7 +156,6 @@ namespace Password_Manager
             };
             var json = JsonSerializer.Serialize(Passwords, options);
 
-            MessageBox.Show(json);
             File.WriteAllText(Path.Join(Path.GetTempPath(), "passwords.json"), json);
         }
         private void DeSerializePasswords()
