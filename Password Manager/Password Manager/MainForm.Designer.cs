@@ -46,13 +46,11 @@
             dataGridPasswords = new DataGridView();
             buttonSave = new Button();
             buttonClear = new Button();
-            errorProvider1 = new ErrorProvider(components);
             groupPasswords = new GroupBox();
             toolTipCommon = new ToolTip(components);
             buttonDelete = new Button();
             groupPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridPasswords).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             groupPasswords.SuspendLayout();
             SuspendLayout();
             // 
@@ -213,7 +211,6 @@
             dataGridPasswords.Size = new Size(540, 230);
             dataGridPasswords.TabIndex = 9;
             dataGridPasswords.CellFormatting += dataGridPasswords_CellFormatting;
-            dataGridPasswords.RowsAdded += dataGridPasswords_RowsAdded;
             dataGridPasswords.SelectionChanged += dataGridPasswords_SelectionChanged;
             // 
             // buttonSave
@@ -237,10 +234,6 @@
             buttonClear.Text = "&Clear";
             buttonClear.UseVisualStyleBackColor = true;
             buttonClear.Click += buttonClear_Click;
-            // 
-            // errorProvider1
-            // 
-            errorProvider1.ContainerControl = this;
             // 
             // groupPasswords
             // 
@@ -287,7 +280,6 @@
             groupPassword.ResumeLayout(false);
             groupPassword.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridPasswords).EndInit();
-            ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             groupPasswords.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -305,7 +297,6 @@
         private DataGridView dataGridPasswords;
         private Button buttonSave;
         private Button buttonClear;
-        private ErrorProvider errorProvider1;
         private GroupBox groupPasswords;
         private Button buttonCopyToCB;
         private TextBox textNotes;

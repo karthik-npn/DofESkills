@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Text.Json;
-using System.IO;
+﻿using System.Text.Json;
 
 namespace Password_Manager
 {
@@ -33,79 +23,90 @@ namespace Password_Manager
             InitializeComponent();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            DeSerializePasswords();
-            RefreshDataGrid();
+            DeSerializePasswords(); // converts it from json file to password objects
+            RefreshDataGrid(); // refreshes the data grid so it can show the correct data
             dataGridPasswords.ClearSelection(); // ensure no rows selected by default
-            SetSaveAddButtonText();
-            IsLoading = false;
+            SetSaveAddButtonText(); //chacks whether to display add or save on save button
+            IsLoading = false; // set loading to false so the rest of the program knows that it is done loading
         }
 
         private void buttonCopyToCB_Click(object sender, EventArgs e)
         {
-            Clipboard.SetDataObject(textPassword.Text);
+            Clipboard.SetDataObject(textPassword.Text); // copies the password to the clipboard by setting the text in the password textbox as the clipboard data
         }
 
         private void buttonShow_Click(object sender, EventArgs e)
         {
-            textPassword.UseSystemPasswordChar = !textPassword.UseSystemPasswordChar;
+            textPassword.UseSystemPasswordChar = !textPassword.UseSystemPasswordChar; // toggles the password to be shown or hidden
 
             if (textPassword.UseSystemPasswordChar == true)
-                buttonShow.BackgroundImage = Properties.Resources.ShowPassword;
+                buttonShow.BackgroundImage = Properties.Resources.ShowPassword; // if it is *** then it will have the show password icon
             else
-                buttonShow.BackgroundImage = Properties.Resources.HidePassword;
+                buttonShow.BackgroundImage = Properties.Resources.HidePassword; // because it is a toggle the only other option can be it isn't *** so it will have the hide password icon
         }
 
         private void textPassword_TextChanged(object sender, EventArgs e)
         {
-            buttonShow.Enabled = buttonCopyToCB.Enabled = !string.IsNullOrWhiteSpace(textPassword.Text);
+            buttonShow.Enabled = buttonCopyToCB.Enabled = !string.IsNullOrWhiteSpace(textPassword.Text); // checks if it is empty. As you want the buttons to be enabled only it isn't blank, a ! is used
         }
         
         private void SetPasswordCount()
         {
-            groupPasswords.Text = $"{groupPasswords.Tag.ToString()} ({dataGridPasswords.Rows.Count})";
+            groupPasswords.Text = $"{groupPasswords.Tag.ToString()} ({dataGridPasswords.Rows.Count})";//method to set the password title of the data grid group box. 
+            // It takes the tag of the group box (password) because it is more versatile and and the number of rows as that is how many passwords there are.
         }
 
         private void SetSaveAddButtonText()
         {
-            buttonSave.Text = SelectedPasswordIndex == -1 ? "&Add" : "&Save";
-            buttonDelete.Enabled = SelectedPasswordIndex != -1;
+            buttonSave.Text = SelectedPasswordIndex == -1 ? "&Add" : "&Save"; // checks if a password is selected. If it is then it will show save, if not it will show add
+            buttonDelete.Enabled = SelectedPasswordIndex != -1; // checks if a password is selected. If it is then it will enable the delete button, if not it will disable it
         }
 
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            textWebsite.Text = textUser.Text = textPassword.Text = textNotes.Text = string.Empty;
-            dataGridPasswords.ClearSelection();
-            SelectedPasswordIndex = -1;
-            SetSaveAddButtonText();
+            textWebsite.Text = textUser.Text = textPassword.Text = textNotes.Text = string.Empty; // sets all the text boxes to empty
+            dataGridPasswords.ClearSelection(); // means that no row is selected
+            SelectedPasswordIndex = -1; // reverses the flag to indicate a password isn't selected
+            SetSaveAddButtonText(); // changes the text of the save button to add and disables delete
         }
 
         private void dataGridPasswords_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex == (int)Columns.Password)
+            if (e.ColumnIndex == (int)Columns.Password) // checks if the column is the password column
             {
-                dataGridPasswords.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = e.Value;
-                e.Value = new string('*', PasswordMaskLength);
+                dataGridPasswords.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag = e.Value; // makes the text displayed equal the password mask
+                e.Value = new string('*', PasswordMaskLength); // changes the value of the cells to the password mask
             }
         }
 
         private void dataGridPasswords_SelectionChanged(object sender, EventArgs e)
         {
-            if (!IsLoading && dataGridPasswords.SelectedRows.Count > 0)
+            if (!IsLoading && dataGridPasswords.SelectedRows.Count > 0)//checks if the data grid is done loading and if there is a row selected
             {
                 var selectedRow = dataGridPasswords.SelectedRows[0];
 
-                textWebsite.Text = selectedRow.Cells[(int)Columns.Website].Value.ToString();
+                textWebsite.Text = selectedRow.Cells[(int)Columns.Website].Value.ToString();// sets the text boxes to the values of the selected row
                 textUser.Text = selectedRow.Cells[(int)Columns.Username].Value.ToString();
                 textPassword.Text = selectedRow.Cells[(int)Columns.Password].Tag?.ToString();
                 textNotes.Text = selectedRow.Cells[(int)Columns.Notes].Value.ToString();
 
-                SelectedPasswordIndex = selectedRow.Index;
+                SelectedPasswordIndex = selectedRow.Index; // changes the flag to indicate a password is selected
 
-                SetSaveAddButtonText();
+                SetSaveAddButtonText(); // changes the text of the save button to save and enables delete
             }
         }
+        /// <summary>
+        /// checks if data has been entered into the text boxes and if it is actually valid. 
+        /// If it isn't then it will show an error message and focus on the text box that needs to be filled in
+        /// </summary>
+        /// <returns></returns>
         private bool IsValidData()
         {
             if (string.IsNullOrWhiteSpace(textWebsite.Text))
@@ -129,6 +130,11 @@ namespace Password_Manager
 
             return true;
         }
+        /// <summary>
+        /// checks if there is valid data present and then adds it to the list of passwords or updates the password in the list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
@@ -137,7 +143,7 @@ namespace Password_Manager
             if (SelectedPasswordIndex == -1)
             {
                 Passwords.Add(new Password { Website = textWebsite.Text, Username = textUser.Text, Pwd = textPassword.Text, Notes = textNotes.Text });
-                SelectedPasswordIndex = Passwords.Count - 1;
+                SelectedPasswordIndex = Passwords.Count - 1; // sets the selected password index to the last password in the list
             }
             else
                 Passwords[SelectedPasswordIndex] = new Password { Website = textWebsite.Text, Username = textUser.Text, Pwd = textPassword.Text, Notes = textNotes.Text };
@@ -148,6 +154,9 @@ namespace Password_Manager
             SetSaveAddButtonText();
             SaveChanges();
         }
+        /// <summary>
+        /// saves the changes to the json file
+        /// </summary>
         private void SaveChanges()
         {
             var options = new JsonSerializerOptions
@@ -158,17 +167,26 @@ namespace Password_Manager
 
             File.WriteAllText(Path.Join(Path.GetTempPath(), "passwords.json"), json);
         }
+        /// <summary>
+        /// converts the json file to password objects
+        /// </summary>
         private void DeSerializePasswords()
         {
             Passwords = new List<Password>();
             string passwordFile = Path.Join(Path.GetTempPath(), "passwords.json");
 
-            if(!File.Exists(passwordFile)) return;
+            if(!File.Exists(passwordFile)) return;// makes sure the path is exists and breaks the method if it doesn't
 
             var json = File.ReadAllText(passwordFile);
             Passwords = json != null ? JsonSerializer.Deserialize<List<Password>>(json) : new List<Password>();
         }
 
+        /// <summary>
+        /// first it makes sure a password is selected and then it removes it from the list of passwords.
+        /// It also refreshes the data grid, saves the changes and simulates the clear button being clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             if (SelectedPasswordIndex == -1) return;
@@ -180,7 +198,9 @@ namespace Password_Manager
             SetSaveAddButtonText();
             SaveChanges();
         }
-
+        /// <summary>
+        /// changes the source to null and then back to the list of passwords to refresh the data grid.
+        /// </summary>
         private void RefreshDataGrid()
         {
             dataGridPasswords.DataSource = null;
