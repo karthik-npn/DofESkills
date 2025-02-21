@@ -49,6 +49,7 @@
             errorProvider1 = new ErrorProvider(components);
             groupPasswords = new GroupBox();
             toolTipCommon = new ToolTip(components);
+            buttonDelete = new Button();
             groupPassword.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridPasswords).BeginInit();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
@@ -81,6 +82,7 @@
             textNotes.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textNotes.BorderStyle = BorderStyle.FixedSingle;
             textNotes.Location = new Point(102, 167);
+            textNotes.MaxLength = 1000;
             textNotes.Name = "textNotes";
             textNotes.Size = new Size(320, 23);
             textNotes.TabIndex = 6;
@@ -128,6 +130,7 @@
             textPassword.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textPassword.BorderStyle = BorderStyle.FixedSingle;
             textPassword.Location = new Point(102, 123);
+            textPassword.MaxLength = 100;
             textPassword.Name = "textPassword";
             textPassword.Size = new Size(271, 23);
             textPassword.TabIndex = 3;
@@ -149,6 +152,7 @@
             textUser.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textUser.BorderStyle = BorderStyle.FixedSingle;
             textUser.Location = new Point(102, 78);
+            textUser.MaxLength = 100;
             textUser.Name = "textUser";
             textUser.Size = new Size(320, 23);
             textUser.TabIndex = 2;
@@ -168,6 +172,7 @@
             textWebsite.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textWebsite.BorderStyle = BorderStyle.FixedSingle;
             textWebsite.Location = new Point(102, 36);
+            textWebsite.MaxLength = 100;
             textWebsite.Name = "textWebsite";
             textWebsite.Size = new Size(320, 23);
             textWebsite.TabIndex = 1;
@@ -204,9 +209,9 @@
             dataGridPasswords.Name = "dataGridPasswords";
             dataGridPasswords.RowTemplate.Height = 25;
             dataGridPasswords.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridPasswords.ShowCellToolTips = false;
             dataGridPasswords.Size = new Size(540, 230);
             dataGridPasswords.TabIndex = 9;
-            toolTipCommon.SetToolTip(dataGridPasswords, "Choose a row and press Del key to delete");
             dataGridPasswords.CellFormatting += dataGridPasswords_CellFormatting;
             dataGridPasswords.RowsAdded += dataGridPasswords_RowsAdded;
             dataGridPasswords.SelectionChanged += dataGridPasswords_SelectionChanged;
@@ -218,8 +223,9 @@
             buttonSave.Name = "buttonSave";
             buttonSave.Size = new Size(75, 23);
             buttonSave.TabIndex = 7;
-            buttonSave.Text = "Save";
+            buttonSave.Text = "&Save";
             buttonSave.UseVisualStyleBackColor = true;
+            buttonSave.Click += buttonSave_Click;
             // 
             // buttonClear
             // 
@@ -228,7 +234,7 @@
             buttonClear.Name = "buttonClear";
             buttonClear.Size = new Size(75, 23);
             buttonClear.TabIndex = 8;
-            buttonClear.Text = "Clear";
+            buttonClear.Text = "&Clear";
             buttonClear.UseVisualStyleBackColor = true;
             buttonClear.Click += buttonClear_Click;
             // 
@@ -249,11 +255,24 @@
             groupPasswords.Tag = "Passwords";
             groupPasswords.Text = "Passwords";
             // 
+            // buttonDelete
+            // 
+            buttonDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonDelete.Enabled = false;
+            buttonDelete.Location = new Point(476, 130);
+            buttonDelete.Name = "buttonDelete";
+            buttonDelete.Size = new Size(75, 23);
+            buttonDelete.TabIndex = 9;
+            buttonDelete.Text = "&Delete";
+            buttonDelete.UseVisualStyleBackColor = true;
+            buttonDelete.Click += buttonDelete_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(570, 488);
+            Controls.Add(buttonDelete);
             Controls.Add(groupPasswords);
             Controls.Add(buttonClear);
             Controls.Add(buttonSave);
@@ -292,5 +311,6 @@
         private TextBox textNotes;
         private Label label3;
         private ToolTip toolTipCommon;
+        private Button buttonDelete;
     }
 }
